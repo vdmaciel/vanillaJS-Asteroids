@@ -7,9 +7,27 @@ class Ship {
     this.rotation = 0; 
     this.thrust = { x: 0, y: 0 }
     this.thrusting = false;
+    this.canShoot = true;
+    this.lasers = [];
 
     this.update = this.update.bind(this);
     this.render = this.render.bind(this);
+    this.shoot = this.shoot.bind(this);
+  }
+
+  shoot(){
+    if(this.canShoot && this.lasers.length < MAX_LASER_NUM){
+      this.lasers.push({
+        x: this.x + this.radius * Math.cos(this.inclination),
+        y: this.y - this.radius * Math.sin(this.inclination),
+        inclination: this.inclination,
+        dx: LASER_SPEED * Math.cos(this.inclination),
+        dy: LASER_SPEED * Math.sin(this.inclination),
+        distance: 0,
+      });
+
+      this.canShoot = false;
+    }
   }
 
   update(){
@@ -28,9 +46,34 @@ class Ship {
     //ship movement
     this.x += this.thrust.x;
     this.y += this.thrust.y;
+
+    //handle edge of screen
+    if(this.x < 0 - this.radius){
+      this.x = canvas.width + this.radius;
+    } else if(this.x > canvas.width + this.radius){
+      this.x = 0 - this.radius;
+    }
+
+    if(this.y < 0 - this.radius){
+      this.y = canvas.height + this.radius;
+    } else if(this.y > canvas.height + this.radius){
+      this.y = 0 - this.radius;
+    }
+
+    //lasers movement
+    for(let i = this.lasers.length - 1; i >= 0; i--){
+      this.lasers[i].x += this.lasers[i].dx / FPS;
+      this.lasers[i].y -= this.lasers[i].dy / FPS;
+
+      if(this.lasers[i].x < 0 || this.lasers[i].x > canvas.width || this.lasers[i].y < 0 || this.lasers[i].y > canvas.height){
+        this.lasers.splice(i, 1);
+      }
+    }
   }
 
   render(){
+
+    //draw ship
     ctx.strokeStyle = "white";
     ctx.lineWidth = LINE_WIDTH;
     ctx.beginPath();
@@ -56,5 +99,17 @@ class Ship {
     );
     ctx.closePath();
     ctx.stroke();
+
+    //draw lasers
+    this.lasers.forEach(laser => {
+      ctx.strokeStyle = "white";
+      ctx.beginPath();
+      ctx.moveTo(laser.x, laser.y);
+      ctx.lineTo(
+        laser.x + 10 * Math.cos(laser.inclination),
+        laser.y - 10 * Math.sin(laser.inclination)
+      );
+      ctx.stroke();
+    })
   }
 }

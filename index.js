@@ -12,6 +12,10 @@ const ASTEROID_SIZE = 100; //initial asteroid size
 const ASTEROID_NUM = 9; //initial number of asteroids
 const ASTEROID_JAGGEDNESS = 0.5;
 
+const MAX_LASER_NUM = 20;
+const LASER_SPEED = 500;
+const LASER_MAX_DISTANCE = 70;
+
 /**@type {HTMLCanvasElement} */
 const canvas = document.querySelector("#gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -52,29 +56,35 @@ function render(){
  *************************/
 
 window.addEventListener("keydown", event => {
-  switch(event.key){
-    case "ArrowLeft":
+  switch(event.keyCode){
+    case 37:
       ship.rotation = SHIP_TURN_SPEED;
       break;
-    case "ArrowRight":
+    case 39:
       ship.rotation = -SHIP_TURN_SPEED;
       break;
-    case "ArrowUp":
+    case 38:
       ship.thrusting = true;
+      break;
+    case 32:
+      ship.shoot();
       break;
   }
 })
 
 window.addEventListener("keyup", event => {
-  switch(event.key){
-    case "ArrowLeft":
+  switch(event.keyCode){
+    case 37:
       ship.rotation = 0;
       break;
-    case "ArrowRight":
+    case 39:
       ship.rotation = 0;
       break;
-    case "ArrowUp":
+    case 38:
       ship.thrusting = false;
+      break;
+    case 32:
+      ship.canShoot = true;
       break;
   }
 })
