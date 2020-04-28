@@ -3,6 +3,8 @@ const LINE_WIDTH = 2; //default line width for drawing
 
 const SHIP_SIZE = 30; //ship height in pixels
 const SHIP_TURN_SPEED = 250; //ship turn speed in degrees
+const SHIP_THRUST_POWER = 5;
+const SPACE_FRICTION = 0.7;
 
 /**@type {HTMLCanvasElement} */
 const canvas = document.querySelector("#gameCanvas");
@@ -42,6 +44,9 @@ window.addEventListener("keydown", event => {
     case "ArrowRight":
       ship.rotation = -SHIP_TURN_SPEED;
       break;
+    case "ArrowUp":
+      ship.thrusting = true;
+      break;
   }
 })
 
@@ -52,6 +57,9 @@ window.addEventListener("keyup", event => {
       break;
     case "ArrowRight":
       ship.rotation = 0;
+      break;
+    case "ArrowUp":
+      ship.thrusting = false;
       break;
   }
 })
