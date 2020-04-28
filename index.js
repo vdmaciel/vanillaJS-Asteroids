@@ -11,6 +11,9 @@ const MAX_ASTEROID_VERTICES = 10; //max number of vertices in each asteroid
 const ASTEROID_SIZE = 100; //initial asteroid size
 const ASTEROID_NUM = 9; //initial number of asteroids
 const ASTEROID_JAGGEDNESS = 0.5;
+const SMALL_POINT = 60;
+const MEDIUM_POINT = 30;
+const LARGE_POINT = 20;
 
 const MAX_LASER_NUM = 20;
 const LASER_SPEED = 500;
@@ -29,6 +32,7 @@ const ctx = canvas.getContext("2d");
 let asteroids;
 let particles;
 let lives;
+let score;
 let ship;
 
 //initialize game entities
@@ -70,6 +74,7 @@ function render(){
   particles.forEach(particle => particle.render());
 
   displayLives();
+  displayScore();
 
   if(ship.alive){
     ship.render();
@@ -128,6 +133,7 @@ function newGame(){
   asteroids = [];
   particles = [];
   lives = GAME_LIVES;
+  score = 0;
   ship = new Ship();
   generateAsteroids();
 }
@@ -163,6 +169,11 @@ function destroyAsteroid(index){
     asteroids.push(new Asteroid(x, y, radius / 2));
   }
 
+  //incrase score
+  if(radius === Math.ceil(ASTEROID_SIZE / 2)) score += LARGE_POINT;
+  else if(radius === Math.ceil(ASTEROID_SIZE / 4)) score += MEDIUM_POINT;
+  else score += SMALL_POINT;
+
   generateParticles(asteroids[index].x, asteroids[index].y, 10);
 
   asteroids.splice(index, 1);
@@ -192,4 +203,12 @@ function displayLives(){
   ctx.fillStyle = "white";
   ctx.font = "small-caps " + TEXT_SMALL + "px dejavu sans mono";
   ctx.fillText(`Lives: ${ship.lives}`, 10, 25);
+}
+
+function displayScore(){
+  //draw the lives
+  ctx.textAlign = "left";
+  ctx.fillStyle = "white";
+  ctx.font = "small-caps " + TEXT_SMALL + "px dejavu sans mono";
+  ctx.fillText(`Score: ${score}`, 120, 25);
 }
