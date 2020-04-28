@@ -177,6 +177,10 @@ function destroyAsteroid(index){
   generateParticles(asteroids[index].x, asteroids[index].y, 10);
 
   asteroids.splice(index, 1);
+
+  if(asteroids.length === 0){
+    generateAsteroids();
+  }
 }
 
 function generateParticles(x, y, num){
