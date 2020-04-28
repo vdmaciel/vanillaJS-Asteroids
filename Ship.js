@@ -11,7 +11,7 @@ class Ship {
   }
 
   update(){
-    this.inclination += this.rotation;
+    this.inclination += (this.rotation / 180) * Math.PI / FPS;
   }
 
   render(){

@@ -1,7 +1,8 @@
 const FPS = 60; //frames per second
 const LINE_WIDTH = 2; //default line width for drawing
 
-const SHIP_SIZE = 30 ; //ship height in pixels
+const SHIP_SIZE = 30; //ship height in pixels
+const SHIP_TURN_SPEED = 250; //ship turn speed in degrees
 
 /**@type {HTMLCanvasElement} */
 const canvas = document.querySelector("#gameCanvas");
@@ -27,3 +28,30 @@ function render(){
 
   ship.render();
 }
+
+
+/**************************
+ * handle events
+ *************************/
+
+window.addEventListener("keydown", event => {
+  switch(event.key){
+    case "ArrowLeft":
+      ship.rotation = SHIP_TURN_SPEED;
+      break;
+    case "ArrowRight":
+      ship.rotation = -SHIP_TURN_SPEED;
+      break;
+  }
+})
+
+window.addEventListener("keyup", event => {
+  switch(event.key){
+    case "ArrowLeft":
+      ship.rotation = 0;
+      break;
+    case "ArrowRight":
+      ship.rotation = 0;
+      break;
+  }
+})
