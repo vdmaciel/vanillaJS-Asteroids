@@ -16,17 +16,23 @@ const MAX_LASER_NUM = 20;
 const LASER_SPEED = 500;
 const LASER_MAX_DISTANCE = 70;
 
+const TEXT_LARGE = 40;
+const TEXT_SMALL = 20;
+
 const PARTICLE_SPEED = 80;
+const GAME_LIVES = 3;
 
 /**@type {HTMLCanvasElement} */
 const canvas = document.querySelector("#gameCanvas");
 const ctx = canvas.getContext("2d");
 
-let asteroids = [];
-let particles = [];
-let ship = new Ship();
+let asteroids;
+let particles;
+let lives;
+let ship;
 
-generateAsteroids();
+//initialize game entities
+newGame();
 
 //set up the game loop
 setInterval(() => {
@@ -35,6 +41,8 @@ setInterval(() => {
 }, 1000 / FPS);
 
 function update(){
+
+  if(ship.lives <= 0) gameOver();
 
   ship.update();
 
@@ -60,6 +68,14 @@ function render(){
   asteroids.forEach(asteroid => asteroid.render());
 
   particles.forEach(particle => particle.render());
+
+  displayLives();
+
+  if(ship.alive){
+    ship.render();
+  } else {
+    displayGameOverScreen();
+  }
 }
 
 
@@ -80,6 +96,9 @@ window.addEventListener("keydown", event => {
       break;
     case 32:
       ship.shoot();
+      break;
+    case 13:
+      if(!ship.alive) newGame();
       break;
   }
 })
@@ -104,6 +123,14 @@ window.addEventListener("keyup", event => {
 /****************************************
  * Utilities
  ***************************************/
+
+function newGame(){
+  asteroids = [];
+  particles = [];
+  lives = GAME_LIVES;
+  ship = new Ship();
+  generateAsteroids();
+}
 
 function generateAsteroids(){
   asteroids = [];
@@ -143,4 +170,26 @@ function destroyAsteroid(index){
 
 function generateParticles(x, y, num){
   for(let i = 0; i < num; i++) particles.push(new Particle(x, y));
+}
+
+function gameOver(){
+  ship.alive = false;
+}
+
+function displayGameOverScreen(){
+  ctx.textAlign = "center";
+  ctx.fillStyle = "white";
+  ctx.font = "small-caps " + TEXT_LARGE + "px dejavu sans mono";
+  ctx.fillText(`Game Over`, canvas.width / 2, canvas.height * 0.75);
+
+  ctx.font = ctx.font = "small-caps " + TEXT_SMALL + "px dejavu sans mono";
+  ctx.fillText("Press enter to restart", canvas.width / 2, canvas.height * 0.5);
+}
+
+function displayLives(){
+  //draw the lives
+  ctx.textAlign = "left";
+  ctx.fillStyle = "white";
+  ctx.font = "small-caps " + TEXT_SMALL + "px dejavu sans mono";
+  ctx.fillText(`Lives: ${ship.lives}`, 10, 25);
 }

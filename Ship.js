@@ -12,6 +12,8 @@ class Ship {
     this.show = true;
     this.exploding = false;
     this.invencible = false;
+    this.lives = GAME_LIVES;
+    this.alive = true;
 
     this.blinkTimeout;
     this.blinkInterval;
@@ -28,6 +30,7 @@ class Ship {
   }
 
   explode() {
+    if(!this.exploding) this.lives--;
     generateParticles(this.x, this.y, 50);
     clearTimeout(this.explodeTimeout);
     this.exploding = true;
@@ -53,6 +56,7 @@ class Ship {
     this.thrusting = false;
     this.thrust = { x: 0, y: 0 };
     this.exploding = false;
+    this.alive = true;
     this.blink();
   }
 
@@ -141,7 +145,7 @@ class Ship {
     }
 
     //detect collisions with asteroids
-    if (!this.exploding && !this.invencible) {
+    if (!this.exploding && !this.invencible && ship.alive) {
       for (let i = 0; i < asteroids.length; i++) {
         if (
           distanceBetweenPoints(
@@ -160,7 +164,7 @@ class Ship {
   }
 
   render() {
-    if (this.show && !this.exploding) {
+    if (this.show && !this.exploding && this.alive) {
       //draw ship
       ctx.strokeStyle = "white";
       ctx.lineWidth = LINE_WIDTH;
