@@ -69,6 +69,28 @@ class Ship {
         this.lasers.splice(i, 1);
       }
     }
+
+    //detect laser collision with asteroids
+    for (let i = asteroids.length - 1; i >= 0; i--) {
+      let ax = asteroids[i].x;
+      let ay = asteroids[i].y;
+      let ar = asteroids[i].radius;
+
+      //loop over the lasers
+      for (let j = this.lasers.length - 1; j >= 0; j--) {
+        let lx = this.lasers[j].x;
+        let ly = this.lasers[j].y;
+
+        if (distanceBetweenPoints(ax, ay, lx, ly) < ar) {
+          //destroy laser
+          this.lasers.splice(j, 1);
+          //remove asteroid
+          destroyAsteroid(i);
+
+          break;
+        }
+      }
+    }
   }
 
   render(){

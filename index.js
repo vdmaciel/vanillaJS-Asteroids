@@ -16,11 +16,14 @@ const MAX_LASER_NUM = 20;
 const LASER_SPEED = 500;
 const LASER_MAX_DISTANCE = 70;
 
+const PARTICLE_SPEED = 80;
+
 /**@type {HTMLCanvasElement} */
 const canvas = document.querySelector("#gameCanvas");
 const ctx = canvas.getContext("2d");
 
 let asteroids = [];
+let particles = [];
 let ship = new Ship();
 
 generateAsteroids();
@@ -36,6 +39,15 @@ function update(){
   ship.update();
 
   asteroids.forEach(asteroid => asteroid.update());
+
+  //update particles
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update();
+    //check distance travelled by each particle
+    if (particles[i].distance > 50) {
+      particles.splice(i, 1);
+    }
+  }
 }
 
 function render(){
@@ -45,9 +57,9 @@ function render(){
 
   ship.render();
 
-  asteroids.forEach(asteroid => {
-    asteroid.render()
-  });
+  asteroids.forEach(asteroid => asteroid.render());
+
+  particles.forEach(particle => particle.render());
 }
 
 
@@ -108,4 +120,27 @@ function generateAsteroids(){
 
 function distanceBetweenPoints(x1, y1, x2, y2){
   return Math.sqrt(Math.pow(x1 -x2, 2) + Math.pow(y1 - y2, 2));
+}
+
+function destroyAsteroid(index){
+  let x = asteroids[index].x;
+  let y = asteroids[index].y;
+  let radius = asteroids[index].radius;
+
+  //split asteroid
+  if(
+    radius === Math.ceil(ASTEROID_SIZE / 2) ||
+    radius === Math.ceil(ASTEROID_SIZE / 4)
+  ) {
+    asteroids.push(new Asteroid(x, y, radius / 2));
+    asteroids.push(new Asteroid(x, y, radius / 2));
+  }
+
+  generateParticles(asteroids[index].x, asteroids[index].y, 10);
+
+  asteroids.splice(index, 1);
+}
+
+function generateParticles(x, y, num){
+  for(let i = 0; i < num; i++) particles.push(new Particle(x, y));
 }
